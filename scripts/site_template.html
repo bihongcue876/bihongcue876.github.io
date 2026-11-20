@@ -1,0 +1,681 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="auto">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>年度提交热力图 · @__LOGIN__</title>
+<meta name="description" content="只统计 commit 次数的年度热力图：平面视图 + 立体天际线视图。">
+<link rel="icon" href="../icon.svg" type="image/svg+xml">
+<style>
+  :root{
+    --bg:#f7f7f7; --fg:#111111; --muted:#6b6b6b; --line:#e0e0e0; --card:#f7f7f7;
+    --c0:#eeeeee; --c1:#d0d0d0; --c2:#a6a6a6; --c3:#6c6c6c; --c4:#1a1a1a;
+    --shadow:0 1px 2px rgba(29,27,24,.06), 0 8px 24px rgba(29,27,24,.05);
+  }
+  html[data-theme="dark"]{
+    --bg:#111111; --fg:#eeeeee; --muted:#969696; --line:#2e2e2e; --card:#111111;
+    --c0:#1e1e1e; --c1:#3a3a3a; --c2:#5c5c5c; --c3:#909090; --c4:#e6e6e6;
+    --shadow:0 1px 2px rgba(0,0,0,.6), 0 8px 24px rgba(0,0,0,.45);
+  }
+  @media (prefers-color-scheme: dark){
+    html[data-theme="auto"]{
+      --bg:#111111; --fg:#eeeeee; --muted:#969696; --line:#2e2e2e; --card:#111111;
+      --c0:#1e1e1e; --c1:#3a3a3a; --c2:#5c5c5c; --c3:#909090; --c4:#e6e6e6;
+      --shadow:0 1px 2px rgba(0,0,0,.6), 0 8px 24px rgba(0,0,0,.45);
+    }
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; padding:28px 20px 40px; background:var(--bg); color:var(--fg);
+    font:14px/1.55 Georgia, "Times New Roman", "Songti SC", "Noto Serif SC", "Noto Serif CJK SC", "SimSun", serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:940px; margin:0 auto}
+  .head{display:flex; align-items:flex-start; justify-content:space-between; gap:16px; flex-wrap:wrap}
+  h1{margin:0; font-size:19px; font-weight:640; letter-spacing:.01em}
+  .sub{margin:4px 0 0; color:var(--muted); font-size:12.5px}
+  .sub b{font-weight:600; color:var(--fg)}
+  .yearnav{display:flex; align-items:center; gap:4px}
+  .arrow{
+    border:1px solid var(--line); background:var(--card); color:var(--muted);
+    width:26px; height:30px; border-radius:8px; cursor:pointer; font-size:16px; line-height:1;
+    transition:color .15s, border-color .15s, transform .15s;
+  }
+  .arrow:hover:not(:disabled){color:var(--fg); border-color:var(--fg); transform:translateY(-1px)}
+  .arrow:disabled{opacity:.35; cursor:default}
+  .tabs{display:flex; gap:6px; background:var(--bg); border:1px solid var(--line); border-radius:3px; padding:3px}
+  .tabs button{
+    font:inherit; font-size:12.5px; font-variant-numeric:tabular-nums; transition:background .18s, color .18s;
+    border:0; background:transparent; color:var(--muted); padding:5px 11px; border-radius:3px; cursor:pointer;
+  }
+  .tabs button:hover{color:var(--fg)}
+  .tabs button[aria-selected="true"]{background:var(--c1); color:#111111; font-weight:600}
+  .tabs button small{font-size:10.5px; opacity:.72; margin-left:5px; font-weight:500}
+  html[data-theme="dark"] .tabs button[aria-selected="true"]{background:var(--c3); color:#111111}
+  @media (prefers-color-scheme: dark){ html[data-theme="auto"] .tabs button[aria-selected="true"]{background:var(--c3); color:#111111} }
+
+  .stats{display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:10px; margin:18px 0 16px}
+  @media (max-width:720px){ .stats{grid-template-columns:repeat(2,minmax(0,1fr))} }
+  .stat{border:1px solid var(--line); border-radius:3px; padding:10px 12px; background:var(--card)}
+  .stat i{display:block; font-style:normal; color:var(--muted); font-size:11.5px; letter-spacing:.02em}
+  .stat b{display:block; font-size:19px; font-weight:640; font-variant-numeric:tabular-nums; margin-top:2px}
+  .stat small{color:var(--muted); font-size:11px}
+
+  .toolbar{display:flex; align-items:center; justify-content:space-between; gap:12px; margin:4px 0 10px; flex-wrap:wrap}
+  .seg{display:flex; gap:2px; border:1px solid var(--line); border-radius:9px; padding:3px}
+  .seg button{font:inherit; font-size:12.5px; border:0; background:transparent; color:var(--muted); padding:4px 12px; border-radius:3px; cursor:pointer}
+  .seg button[aria-pressed="true"]{background:var(--fg); color:var(--bg); font-weight:600}
+  .legend{display:flex; align-items:center; gap:5px; color:var(--muted); font-size:11.5px}
+  .legend i{width:11px; height:11px; border-radius:2.5px; display:inline-block}
+
+  .stage{position:relative; border:1px solid var(--line); border-radius:3px; padding:14px 12px 8px; background:var(--card); box-shadow:var(--shadow)}
+  #flat{display:block; margin:0 auto; overflow:visible}
+  #flat rect{transition:stroke .12s ease, filter .18s ease}
+  #flat rect:hover{stroke:var(--fg); stroke-width:1.1}
+  #flat rect.today{stroke:var(--fg); stroke-width:1.1; stroke-opacity:.75}
+  @keyframes halo{0%,100%{stroke-opacity:.28} 50%{stroke-opacity:.9}}
+  #flat rect.today{animation:halo 2.6s ease-in-out infinite}
+  @media (prefers-reduced-motion: reduce){ #flat rect.today{animation:none} }
+  #iso{display:none; width:100%; height:auto; touch-action:none; cursor:grab}
+  #iso.dragging{cursor:grabbing}
+  .stage[data-view="iso"] #flat{display:none}
+  .stage[data-view="iso"] #iso{display:block}
+
+  .tip{
+    position:absolute; pointer-events:none; z-index:5; transform:translate(-50%,-130%);
+    background:#111111; color:#f7f7f7; font-size:12px; line-height:1.45; padding:6px 9px; border-radius:3px;
+    white-space:nowrap; box-shadow:0 6px 18px rgba(0,0,0,.28); opacity:0; transition:opacity .1s;
+  }
+  html[data-theme="dark"] .tip{background:#eeeeee; color:#111111}
+  .tip.on{opacity:1}
+  .tip b{font-variant-numeric:tabular-nums}
+
+  .months{margin-top:14px; border:1px solid var(--line); border-radius:3px; padding:10px 12px 4px;
+    background:var(--card); box-shadow:var(--shadow)}
+  #months{display:block; width:100%; height:auto}
+  #months .slot{transition:opacity .18s}
+  #months .hit{fill:transparent}
+  #months .slot:hover .hit{fill:var(--c0); opacity:.55; rx:8}
+  #months rect.bar{transform-box:fill-box; transform-origin:50% 100%;
+    transition:transform .55s cubic-bezier(.4,0,.2,1)}
+
+  footer{margin-top:14px; color:var(--muted); font-size:11.5px; display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap}
+  .hint{color:var(--muted)}
+  .home{color:inherit; text-decoration:none; border-bottom:1px solid var(--line); padding-bottom:1px}
+  .home:hover{border-color:currentColor}
+  .theme{border:1px solid var(--line); background:var(--card); color:var(--muted);
+    border-radius:8px; width:29px; height:29px; cursor:pointer; font-size:13px; line-height:1; margin-left:6px}
+  .theme:hover{color:var(--fg)}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <header class="head">
+    <div>
+      <h1>年度提交热力图</h1>
+      <p class="sub"><b>@__LOGIN__</b> · 只统计 commit 次数，不含仓库名、issue/PR 标题与提交内容</p>
+    </div>
+    <div class="yearnav">
+      <button class="arrow" id="prevY" aria-label="上一年" title="上一年（←）">‹</button>
+      <div class="tabs" id="years" role="tablist" aria-label="年份"></div>
+      <button class="arrow" id="nextY" aria-label="下一年" title="下一年（→）">›</button>
+    </div>
+  </header>
+
+  <section class="stats" id="stats"></section>
+
+  <div class="toolbar">
+    <div class="seg" id="views" role="group" aria-label="视图">
+      <button data-view="flat" aria-pressed="false">平面</button>
+      <button data-view="iso" aria-pressed="true">立体</button>
+    </div>
+    <div style="display:flex;align-items:center">
+      <div class="legend" id="legend"><span>少</span><span>多</span></div>
+      <button class="theme" id="themeBtn" title="切换配色（自动 / 浅色 / 深色）" aria-label="切换配色">◐</button>
+    </div>
+  </div>
+
+  <div class="stage" id="stage" data-view="iso">
+    <svg id="flat" role="img" aria-labelledby="flatTitle"></svg>
+    <canvas id="iso" aria-hidden="true"></canvas>
+    <div class="tip" id="tip" hidden></div>
+  </div>
+
+  <div class="months"><svg id="months" role="img" aria-label="每月提交次数"></svg></div>
+
+  <footer>
+    <span class="hint" id="hint">柱高 = log(提交数) · 悬停柱子看日期与次数</span>
+    <span><a class="home" href="../">← 首页</a> · 数据更新于 __GENERATED__</span>
+  </footer>
+</main>
+
+<script>
+const DATA = __DATA__;
+
+/* ------------------------------------------------ 基础工具 */
+const $ = (s, r) => (r || document).querySelector(s);
+const D = new Date();
+const pad = n => String(n).padStart(2, '0');
+const iso = d => d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+const WD = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+const MONTHS = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
+
+const state = {
+  years: Object.keys(DATA.years).sort((a, b) => a - b),
+  year: null,
+  view: 'iso',
+  theme: 'auto',
+};
+
+/* 主题：从 CSS 变量读色，保证 SVG / canvas / 图例一致 */
+function palette() {
+  const cs = getComputedStyle(document.documentElement);
+  const get = n => cs.getPropertyValue(n).trim();
+  return { c0: get('--c0'), c1: get('--c1'), c2: get('--c2'), c3: get('--c3'), c4: get('--c4'),
+           fg: get('--fg'), muted: get('--muted'), line: get('--line') };
+}
+const LEVELS = ['c1', 'c2', 'c3', 'c4'];
+
+/* 分档：0 → 空；其余按当年峰值的分位切 4 档 */
+function thresholds(days) {
+  const vals = Object.values(days).filter(v => v > 0).sort((a, b) => a - b);
+  if (!vals.length) return [1, 2, 3, 4];
+  const q = p => vals[Math.min(vals.length - 1, Math.floor(vals.length * p))];
+  return [q(.25), q(.5), q(.78), q(1)].map(v => Math.max(1, v));
+}
+function levelOf(v, t) {
+  if (!v) return 0;
+  let l = 1;
+  for (const x of t) if (v >= x) l++;
+  return Math.min(4, l);
+}
+const levelColor = (lv, p) => (lv === 0 ? p.c0 : p[LEVELS[lv - 1]]);
+
+/* 统计 */
+function stats(days, year) {
+  const keys = Object.keys(days).sort();
+  const total = keys.reduce((s, k) => s + days[k], 0);
+  const active = keys.length;
+  let best = { d: '', v: 0 };
+  for (const k of keys) if (days[k] > best.v) best = { d: k, v: days[k] };
+  // 最长连续
+  let streak = 0, run = 0;
+  const full = yearData(year);
+  for (const d of full) {
+    if (days[iso(d)] > 0) { run++; streak = Math.max(streak, run); } else run = 0;
+  }
+  return { total, active, streak, best, avg: active ? total / active : 0 };
+}
+
+/* 整年的日期数组（截至今天） */
+const today = iso(new Date());
+function yearData(year) {
+  const out = [], y = +year;
+  for (let m = 0; m < 12; m++) {
+    const last = new Date(y, m + 1, 0).getDate();
+    for (let d = 1; d <= last; d++) {
+      const dt = new Date(y, m, d);
+      if (iso(dt) > today) return out;
+      out.push(dt);
+    }
+  }
+  return out;
+}
+
+/* ------------------------------------------------ 年份 / 视图 / 图例 */
+const yearTotal = y => Object.values(DATA.years[y]).reduce((s, v) => s + v, 0);
+
+function buildTabs() {
+  const box = $('#years');
+  box.innerHTML = '';
+  for (const y of state.years) {
+    const b = document.createElement('button');
+    const t = yearTotal(y);
+    b.innerHTML = y + '<small>' + t + '</small>';
+    b.title = y + ' 年 · ' + t + ' 次提交';
+    b.setAttribute('role', 'tab');
+    b.addEventListener('click', () => selectYear(y));
+    b.dataset.y = y;
+    box.appendChild(b);
+  }
+}
+function buildLegend() {
+  const p = palette(), box = $('#legend');
+  box.innerHTML = '<span>少</span>';
+  for (let lv = 0; lv <= 4; lv++) {
+    const i = document.createElement('i');
+    i.style.background = levelColor(lv, p);
+    box.appendChild(i);
+  }
+  box.insertAdjacentHTML('beforeend', '<span>多</span>');
+}
+
+function selectYear(y) {
+  state.year = y;
+  [...$('#years').children].forEach(b => b.setAttribute('aria-selected', String(b.dataset.y === y)));
+  const older = state.years.indexOf(y) === 0;
+  const newer = state.years.indexOf(y) === state.years.length - 1;
+  $('#prevY').disabled = older;      // ‹ 更早
+  $('#nextY').disabled = newer;      // › 更新
+  const days = DATA.years[y];
+  renderStats(days, y);
+  renderMonths(days, y);
+  renderFlat(days, y);
+  isoState.target = isoGeometry(days, y);
+  isoState.snap = !!prefersReduced();
+  if (state.view === 'iso') startIso();
+}
+
+function viewTo(v) {
+  state.view = v;
+  $('#stage').dataset.view = v;
+  [...$('#views').children].forEach(b => b.setAttribute('aria-pressed', String(b.dataset.view === v)));
+  $('#hint').textContent = v === 'flat'
+    ? '悬停格子看当天次数 · 切到「立体」看柱高'
+    : '柱高按提交数开方缩放 · 悬停柱子看详情';
+  if (v === 'iso') startIso(); else haltIso();
+}
+
+/* ------------------------------------------------ 月度分布（多少次） */
+function monthTotals(days, year) {
+  const out = Array.from({ length: 12 }, () => 0);
+  for (const k of Object.keys(days)) {
+    if (k.slice(0, 4) !== String(year)) continue;
+    out[+k.slice(5, 7) - 1] += days[k];
+  }
+  return out;
+}
+function renderMonths(days, year) {
+  const svg = $('#months');
+  const p = palette();
+  const vals = monthTotals(days, year);
+  const max = Math.max(1, ...vals);
+  const W = 960, H = 104, TOPY = 16, BASE = 74, BARW = 46;
+  const slot = (W - 16) / 12;
+  const gid = 'mg' + (document.documentElement.dataset.theme || 'auto');
+  const out = ['<defs>'];
+  for (let lv = 1; lv <= 4; lv++) {
+    const c = levelColor(lv, p);
+    out.push('<linearGradient id="' + gid + '-' + lv + '" x1="0" y1="0" x2="0" y2="1">' +
+             '<stop offset="0" stop-color="' + c + '" stop-opacity=".95"/>' +
+             '<stop offset="1" stop-color="' + c + '" stop-opacity=".62"/></linearGradient>');
+  }
+  out.push('</defs>');
+  vals.forEach((v, i) => {
+    const x0 = 8 + i * slot;
+    const cx = x0 + slot / 2;
+    const h = v ? Math.max(0.12, Math.sqrt(v / max)) : 0.02;  // 开方缩放，月份之间更容易比较
+    const lv = v ? levelOf(v, [0, max * .22, max * .5, max * .78]) : 0;
+    const fill = v ? 'url(#' + gid + '-' + lv + ')' : p.c0;
+    out.push('<g class="slot">');
+    out.push('<rect class="hit" x="' + (x0 + 3) + '" y="' + (TOPY - 6) + '" width="' + (slot - 6) +
+             '" height="' + (H - 14) + '" rx="8"></rect>');
+    out.push('<text x="' + cx + '" y="' + (TOPY - 2) + '" text-anchor="middle" font-size="11" fill="' +
+             (v ? p.fg : p.muted) + '" opacity="' + (v ? '.92' : '.55') + '">' + (v || '·') + '</text>');
+    out.push('<rect class="bar" x="' + (cx - BARW / 2) + '" y="' + (BASE - 52) + '" width="' + BARW +
+             '" height="52" rx="5" fill="' + fill + '" style="transform:scaleY(' + h + ')"></rect>');
+    out.push('<text x="' + cx + '" y="' + (H - 8) + '" text-anchor="middle" font-size="10.5" fill="' +
+             p.muted + '">' + MONTHS[i] + '</text>');
+    out.push('</g>');
+  });
+  svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+  svg.innerHTML = out.join('');
+}
+
+/* ------------------------------------------------ 平面视图（SVG） */
+const CELL = 13, GAP = 3.5, STEP = CELL + GAP, LEFT = 30, TOP = 22;
+function renderFlat(days, year) {
+  const svg = $('#flat');
+  const p = palette();
+  const th = thresholds(days);
+  const first = new Date(+year, 0, 1);
+  const start = new Date(first);
+  start.setDate(start.getDate() - ((start.getDay() + 7) % 7));   // 回退到周日
+  const weeks = [];
+  let d = new Date(start), cur = [];
+  const lastDay = yearData(year).length ? yearData(year).slice(-1)[0] : new Date(+year, 11, 31);
+  while (d <= lastDay) {
+    cur.push(new Date(d));
+    if (cur.length === 7) { weeks.push(cur); cur = []; }
+    d.setDate(d.getDate() + 1);
+  }
+  if (cur.length) { while (cur.length < 7) cur.push(null); weeks.push(cur); }
+
+  const W = LEFT + weeks.length * STEP + 6;
+  const H = TOP + 7 * STEP + 4;
+  svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+  svg.setAttribute('width', W);
+  svg.setAttribute('height', H);
+  svg.style.maxWidth = W + 'px';
+
+  const parts = [];
+  parts.push('<title id="flatTitle">' + year + ' 年逐日提交次数</title>');
+
+  // 月份分隔线（淡虚线，只画月首）
+  weeks.forEach((week, wi) => {
+    const firstDay = week.find(x => x) || null;
+    if (!firstDay || firstDay.getDate() > 7) return;
+    if (firstDay.getMonth() === 0 && wi === 0) return;
+    const x = LEFT + wi * STEP - GAP / 2;
+    parts.push('<line x1="' + x + '" y1="' + (TOP - 2) + '" x2="' + x + '" y2="' + (TOP + 7 * STEP) +
+               '" stroke="' + p.line + '" stroke-width="1" stroke-dasharray="2 4" opacity=".7"></line>');
+  });
+
+  // 月份标签（相邻不足 3 列就跳过，避免挤在一起）
+  let lastMi = -9, lastMonth = -1;
+  weeks.forEach((week, wi) => {
+    const firstDay = week.find(x => x) || null;
+    if (!firstDay) return;
+    const m = firstDay.getMonth();
+    if (m !== lastMonth && wi - lastMi >= 3) {
+      lastMi = wi; lastMonth = m;
+      parts.push('<text x="' + (LEFT + wi * STEP) + '" y="13" fill="' + p.muted + '" font-size="10">' +
+                 MONTHS[m] + '</text>');
+    }
+  });
+  // 星期标签
+  [[1, '一'], [3, '三'], [5, '五']].forEach(([row, t]) => {
+    parts.push('<text x="2" y="' + (TOP + row * STEP + CELL - 2) + '" fill="' + p.muted +
+               '" font-size="9.5">' + t + '</text>');
+  });
+  // 格子
+  weeks.forEach((week, wi) => {
+    week.forEach((dt, row) => {
+      if (!dt || iso(dt) > today) return;
+      const key = iso(dt), v = days[key] || 0, lv = levelOf(v, th);
+        const cls = key === today ? ' class="today"' : '';
+      parts.push('<rect' + cls + ' x="' + (LEFT + wi * STEP) + '" y="' + (TOP + row * STEP) +
+                 '" width="' + CELL + '" height="' + CELL + '" rx="3" fill="' + levelColor(lv, p) +
+                 '" data-d="' + key + '" data-v="' + v + '"></rect>');
+    });
+  });
+  svg.innerHTML = parts.join('');
+
+  // 悬停提示
+  svg.onmousemove = e => {
+    const t = e.target;
+    if (!t.dataset || !t.dataset.d) return hideTip();
+    const r = $('#stage').getBoundingClientRect();
+    showTip(t.dataset.d, +t.dataset.v, e.clientX - r.left, e.clientY - r.top);
+  };
+  svg.onmouseleave = hideTip;
+}
+
+function showTip(d, v, x, y) {
+  const tip = $('#tip');
+  const dt = new Date(d + 'T00:00:00');
+  tip.innerHTML = '<b>' + d + '</b> ' + WD[dt.getDay()] + ' · ' + v + ' 次提交';
+  tip.style.left = x + 'px';
+  tip.style.top = y + 'px';
+  tip.hidden = false;
+  tip.classList.add('on');
+}
+function hideTip() { const t = $('#tip'); t.classList.remove('on'); t.hidden = true; }
+
+/* ------------------------------------------------ 立体视图（canvas 正交投影，可拖拽旋转） */
+const isoState = { raf: 0, target: [], cur: [], hoverKey: null, snap: false,
+                   fit: 0, view: null, drag: null };
+const prefersReduced = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* 默认视角：yaw 45 度、俯角 18.2 度，对齐原来的等距观感 */
+const VIEW0 = { yaw: 0.7853981633974483, tilt: 0.3178 };
+const VIEW = { yaw: VIEW0.yaw, tilt: VIEW0.tilt };
+
+/* 世界坐标：x 周、z 星期、h 高度；返回 [屏幕 x, 屏幕 y, 深度] */
+function project(x, h, z) {
+  const cy = Math.cos(VIEW.yaw), sy = Math.sin(VIEW.yaw);
+  const cp = Math.cos(VIEW.tilt), sp = Math.sin(VIEW.tilt);
+  const rx = x * cy - z * sy;
+  const rz = x * sy + z * cy;
+  return [rx, rz * sp - h * cp, h * sp + rz * cp];
+}
+
+function isoGeometry(days, year) {
+  const th = thresholds(days);
+  const first = new Date(+year, 0, 1);
+  const start = new Date(first);
+  start.setDate(start.getDate() - ((start.getDay() + 7) % 7));
+  const cells = [];
+  const lastDay = yearData(year).length ? yearData(year).slice(-1)[0] : new Date(+year, 11, 31);
+  let d = new Date(start), col = 0, row = 0;
+  while (d <= lastDay) {
+    const key = iso(d);
+    const v = iso(d) > today ? 0 : (days[key] || 0);
+    cells.push({ key, v, x: col, y: row, lv: levelOf(v, th),
+                 h: v ? Math.min(1 + Math.log2(1 + v) * 0.85, 5.4) : 0 });
+    row++;
+    if (row === 7) { row = 0; col++; }
+    d.setDate(d.getDate() + 1);
+  }
+  return cells;
+}
+
+function isoDraw(lockScale) {
+  const cv = $('#iso');
+  const p = palette();
+  const cells = isoState.cur.length ? isoState.cur : isoState.target;
+  if (!cells.length) return;
+
+  const cssW = Math.max(320, cv.parentElement.clientWidth - 24);
+  const cssH = Math.round(Math.min(470, Math.max(280, cssW * 0.52)));
+
+  let minX = 1e9, maxX = -1e9, minY = 1e9, maxY = -1e9;
+  for (const c of cells) {
+    const h = c.h || 0;
+    for (const q of [[c.x, c.y, 0], [c.x + 1, c.y, 0], [c.x, c.y + 1, 0], [c.x + 1, c.y + 1, 0],
+                     [c.x, c.y, h], [c.x + 1, c.y, h], [c.x, c.y + 1, h], [c.x + 1, c.y + 1, h]]) {
+      const pr = project(q[0], q[2], q[1]);
+      minX = Math.min(minX, pr[0]); maxX = Math.max(maxX, pr[0]);
+      minY = Math.min(minY, pr[1]); maxY = Math.max(maxY, pr[1]);
+    }
+  }
+  const spanX = maxX - minX || 1, spanY = maxY - minY || 1;
+  const fit = Math.min(cssW / spanX, cssH / spanY) * 0.94;
+  const s = (lockScale && isoState.fit) ? isoState.fit : fit;
+  if (!lockScale) isoState.fit = fit;
+
+  const W = cssW, H = cssH;
+  const dpr = Math.min(2, window.devicePixelRatio || 1);
+  const cw = Math.round(W * dpr), ch = Math.round(H * dpr);
+  if (cv.width !== cw || cv.height !== ch) { cv.width = cw; cv.height = ch; }
+  cv.style.width = W + 'px'; cv.style.height = H + 'px';
+  const g = cv.getContext('2d');
+  g.setTransform(dpr, 0, 0, dpr, 0, 0);
+  g.clearRect(0, 0, W, H);
+
+  const ox = W / 2 - (minX + maxX) / 2 * s;
+  const oy = H / 2 - (minY + maxY) / 2 * s;
+  isoState.view = { s: s, ox: ox, oy: oy };
+  const P = (x, h, z) => { const pr = project(x, h, z); return [pr[0] * s + ox, pr[1] * s + oy]; };
+
+  const shade = (hex, k) => {
+    const n = parseInt(hex.slice(1), 16);
+    const r = Math.min(255, Math.round(((n >> 16) & 255) * k));
+    const gg = Math.min(255, Math.round(((n >> 8) & 255) * k));
+    const b = Math.min(255, Math.round((n & 255) * k));
+    return 'rgb(' + r + ',' + gg + ',' + b + ')';
+  };
+  const quad = (a, b, c2, d2, fill) => {
+    g.beginPath(); g.moveTo(a[0], a[1]); g.lineTo(b[0], b[1]);
+    g.lineTo(c2[0], c2[1]); g.lineTo(d2[0], d2[1]); g.closePath();
+    g.fillStyle = fill; g.fill();
+  };
+  const inset = 0.07;
+  const sy = Math.sin(VIEW.yaw), cy = Math.cos(VIEW.yaw);
+  const nearOf = (c) => (c.x + 0.5) * sy + (c.y + 0.5) * cy;
+
+  const order = cells.slice().sort((a, b) => nearOf(a) - nearOf(b));
+  for (const c of order) {
+    const x0 = c.x + inset, x1 = c.x + 1 - inset;
+    const z0 = c.y + inset, z1 = c.y + 1 - inset;
+    const base = levelColor(c.lv, p);
+    const h = c.h || 0;
+    const hi = c.key === isoState.hoverKey;
+
+    quad(P(x0, 0, z0), P(x1, 0, z0), P(x1, 0, z1), P(x0, 0, z1), c.v ? shade(base, .40) : p.c0);
+
+    if (h > 0) {
+      if (sy >= 0) quad(P(x1, 0, z0), P(x1, 0, z1), P(x1, h, z1), P(x1, h, z0), shade(base, hi ? 1.08 : .70));
+      else         quad(P(x0, 0, z0), P(x0, 0, z1), P(x0, h, z1), P(x0, h, z0), shade(base, hi ? 1.08 : .70));
+      if (cy >= 0) quad(P(x0, 0, z1), P(x1, 0, z1), P(x1, h, z1), P(x0, h, z1), shade(base, hi ? .98 : .84));
+      else         quad(P(x0, 0, z0), P(x1, 0, z0), P(x1, h, z0), P(x0, h, z0), shade(base, hi ? .98 : .84));
+      quad(P(x0, h, z0), P(x1, h, z0), P(x1, h, z1), P(x0, h, z1), shade(base, hi ? 1.4 : 1.0));
+    }
+  }
+}
+
+function startIso() {
+  isoState.cur = isoState.snap ? isoState.target.map(c => ({ ...c }))
+                               : (isoState.cur.length === isoState.target.length
+                                  ? isoState.cur : isoState.target.map(c => ({ ...c, h: 0 })));
+  if (!isoState.raf) tickIso();
+}
+function haltIso() {
+  cancelAnimationFrame(isoState.raf);
+  isoState.raf = 0;
+  isoState.cur = [];
+}
+function tickIso() {
+  const tg = isoState.target;
+  if (isoState.cur.length !== tg.length) isoState.cur = tg.map(c => ({ ...c, h: 0 }));
+  let moving = false;
+  for (let i = 0; i < tg.length; i++) {
+    const c = isoState.cur[i], t = tg[i];
+    c.h += (t.h - c.h) * (isoState.snap ? 1 : 0.18);
+    if (Math.abs(t.h - c.h) > 0.004) moving = true;
+    c.lv = t.lv; c.v = t.v; c.key = t.key;
+  }
+  isoDraw();
+  if (moving) isoState.raf = requestAnimationFrame(tickIso);
+  else { isoState.raf = 0; }
+}
+
+/* 悬停：所有格子投影后找离指针最近的一根柱子 */
+function isoHover(e) {
+  const cv = $('#iso'), r = cv.getBoundingClientRect();
+  const cells = isoState.cur.length ? isoState.cur : isoState.target;
+  const v = isoState.view;
+  if (!cells.length || !v) return;
+  const mx = e.clientX - r.left, my = e.clientY - r.top;
+  let best = null, bestD = 1e9;
+  for (const c of cells) {
+    const pr = project(c.x + .5, (c.h || 0) * .5, c.y + .5);
+    const px = pr[0] * v.s + v.ox, py = pr[1] * v.s + v.oy;
+    const d2 = (px - mx) ** 2 + (py - my) ** 2;
+    if (d2 < bestD) { bestD = d2; best = c; }
+  }
+  if (!best || bestD > 120) { isoState.hoverKey = null; hideTip(); isoDraw(); return; }
+  isoState.hoverKey = best.key;
+  isoDraw();
+  showTip(best.key, best.v, e.clientX - $('#stage').getBoundingClientRect().left,
+          e.clientY - $('#stage').getBoundingClientRect().top);
+}
+
+/* 拖拽旋转：左右改 yaw，上下改俯角；双击回默认视角 */
+function isoReset() { VIEW.yaw = VIEW0.yaw; VIEW.tilt = VIEW0.tilt; isoDraw(); }
+
+function isoPointerDown(e) {
+  const cv = $('#iso');
+  isoState.drag = { x: e.clientX, y: e.clientY, yaw: VIEW.yaw, tilt: VIEW.tilt };
+  try { cv.setPointerCapture(e.pointerId); } catch (_) {}
+  cv.classList.add('dragging');
+  isoState.hoverKey = null; hideTip();
+}
+function isoPointerMove(e) {
+  if (!isoState.drag) { isoHover(e); return; }
+  const d = isoState.drag;
+  VIEW.yaw = d.yaw - (e.clientX - d.x) * 0.009;
+  VIEW.tilt = Math.max(0.10, Math.min(1.30, d.tilt + (e.clientY - d.y) * 0.006));
+  isoDraw(true);
+}
+function isoPointerUp(e) {
+  if (!isoState.drag) return;
+  isoState.drag = null;
+  const cv = $('#iso');
+  cv.classList.remove('dragging');
+  try { cv.releasePointerCapture(e.pointerId); } catch (_) {}
+  isoDraw();
+}
+
+/* ------------------------------------------------ 主题 / 启动 */
+function applyTheme(t) {
+  state.theme = t;
+  document.documentElement.dataset.theme = t;
+  localStorage.setItem('hm-theme', t);
+  requestAnimationFrame(() => {
+    buildLegend();
+    const days = DATA.years[state.year];
+    renderMonths(days, state.year);
+    renderFlat(days, state.year);
+    isoState.target = isoGeometry(days, state.year);
+    if (state.view === 'iso') { isoState.cur = []; startIso(); }
+  });
+}
+function renderStats(days, year) {
+  const st = stats(days, year), box = $('#stats');
+  const items = [
+    ['总提交', st.total, '次'],
+    ['活跃天', st.active, '天'],
+    ['最长连续', st.streak, '天'],
+    ['最忙一天', st.best.v, st.best.d ? st.best.d.slice(5) + ' · ' + WD[new Date(st.best.d + 'T00:00:00').getDay()] : '—'],
+    ['活跃日均', st.avg.toFixed(1), '次'],
+  ];
+  box.innerHTML = items.map(([k, v, s]) =>
+    '<div class="stat"><i>' + k + '</i><b>' + v + '</b><small>' + s + '</small></div>').join('');
+}
+
+(function init() {
+  const saved = localStorage.getItem('hm-theme');
+  state.theme = saved || 'auto';
+  document.documentElement.dataset.theme = state.theme;
+
+  buildTabs();
+  buildLegend();
+  const q = new URLSearchParams(location.search);
+  viewTo(q.get('view') === 'flat' ? 'flat' : 'iso');
+  selectYear(state.years[state.years.length - 1]);
+
+  const step = d => {
+    const i = state.years.indexOf(state.year);
+    const n = state.years[i + d];
+    if (n) selectYear(n);
+  };
+  $('#prevY').addEventListener('click', () => step(-1));
+  $('#nextY').addEventListener('click', () => step(1));
+
+  $('#views').addEventListener('click', e => {
+    const b = e.target.closest('button[data-view]');
+    if (b) viewTo(b.dataset.view);
+  });
+  $('#themeBtn').addEventListener('click', () => {
+    const order = ['auto', 'light', 'dark'];
+    applyTheme(order[(order.indexOf(state.theme) + 1) % 3]);
+  });
+  const isoCv = $('#iso');
+  isoCv.addEventListener('pointerdown', isoPointerDown);
+  isoCv.addEventListener('pointermove', isoPointerMove);
+  isoCv.addEventListener('pointerup', isoPointerUp);
+  isoCv.addEventListener('pointercancel', isoPointerUp);
+  isoCv.addEventListener('dblclick', isoReset);
+  isoCv.addEventListener('pointerleave', () => {
+    if (isoState.drag) return;
+    isoState.hoverKey = null; hideTip(); isoDraw();
+  });
+
+  let rt;
+  window.addEventListener('resize', () => {
+    clearTimeout(rt);
+    rt = setTimeout(() => { if (state.view === 'iso') isoDraw(); }, 120);
+  });
+  // 键盘 ←/→ 切年份
+  window.addEventListener('keydown', e => {
+    if (e.key === 'ArrowLeft') step(-1);
+    else if (e.key === 'ArrowRight') step(1);
+  });
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+    if (state.theme === 'auto') applyTheme('auto');
+  });
+})();
+</script>
+</body>
+</html>
