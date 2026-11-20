@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src 'self' data:; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
+<title>资源 · B . H . C</title>
+<meta name="description" content="资源">
+<link rel="icon" href="/icon.svg" type="image/svg+xml">
+<style>
+  :root{
+    --paper:#f8f5ef;
+    --ink:#1d1b18;
+    --muted:#6d665c;
+    --line:#e4ddd1;
+    --rule:#d2c9ba;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --paper:#141312;
+      --ink:#e8e3d9;
+      --muted:#9b9285;
+      --line:#2a2723;
+      --rule:#3a352d;
+    }
+  }
+  *{ box-sizing:border-box }
+  html{ -webkit-text-size-adjust:100% }
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:Georgia, "Times New Roman", "Iowan Old Style",
+                "Songti SC", "Noto Serif SC", "Noto Serif CJK SC",
+                "Source Han Serif SC", "SimSun", serif;
+    font-size:16px;
+    line-height:1.9;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+  }
+  ::selection{ background:var(--line) }
+  .page{
+    padding:clamp(32px,7vh,64px) clamp(20px,4vw,64px) 48px;
+  }
+  .masthead{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    gap:16px;
+    padding-bottom:14px;
+    border-bottom:1px solid var(--rule);
+  }
+  .mark{
+    margin:0;
+    font-size:.9rem;
+    font-style:italic;
+    letter-spacing:.18em;
+  }
+  .mark a{ color:inherit; text-decoration:none }
+  .since{
+    margin:0;
+    font-size:.78rem;
+    color:var(--muted);
+    letter-spacing:.06em;
+  }
+  .head{
+    margin:clamp(36px,6vh,56px) 0 0;
+    padding-bottom:26px;
+    border-bottom:1px solid var(--rule);
+  }
+  .eyebrow{
+    margin:0;
+    font-size:.74rem;
+    color:var(--muted);
+    letter-spacing:.24em;
+  }
+  .title{
+    margin:14px 0 0;
+    font-size:clamp(1.9rem, 1.15rem + 2.2vw, 2.9rem);
+    font-weight:400;
+    line-height:1.32;
+    letter-spacing:.04em;
+  }
+  .lede{
+    margin:14px 0 0;
+    color:var(--muted);
+    font-size:.95rem;
+    line-height:1.85;
+  }
+  .group-label{
+    margin:38px 0 0;
+    font-size:.76rem;
+    font-weight:400;
+    color:var(--muted);
+    letter-spacing:.22em;
+  }
+  .group-label::before{
+    content:"";
+    display:inline-block;
+    width:1.3rem;
+    height:1px;
+    margin-right:10px;
+    vertical-align:.3em;
+    background:var(--rule);
+  }
+  .site-footer{
+    margin:64px 0 0;
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    color:var(--muted);
+    font-size:.8rem;
+    letter-spacing:.04em;
+  }
+  .site-footer a{
+    color:var(--muted);
+    text-decoration:none;
+    padding-bottom:1px;
+    border-bottom:1px solid var(--line);
+  }
+  .site-footer a:hover{ color:var(--ink); border-bottom-color:var(--ink) }
+  a:focus-visible{ outline:1px solid var(--ink); outline-offset:2px }
+  @media (prefers-reduced-motion: reduce){
+    *{ transition:none !important }
+  }
+  .items{
+    margin:0;
+    padding:0;
+    list-style:none;
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(300px, 1fr));
+    gap:0 44px;
+  }
+  .item{ border-bottom:1px solid var(--line) }
+  .item-inner{
+    display:grid;
+    grid-template-columns:1fr auto;
+    align-items:baseline;
+    gap:2px 12px;
+    padding:12px 2px;
+    color:inherit;
+    text-decoration:none;
+  }
+  .item-name{ font-size:.95rem; letter-spacing:.03em }
+  a.item-inner:hover .item-name{
+    text-decoration:underline;
+    text-underline-offset:.28em;
+    text-decoration-thickness:1px;
+  }
+  .item-tag{
+    color:var(--muted);
+    font-size:.72rem;
+    letter-spacing:.12em;
+    font-variant-numeric:tabular-nums;
+    white-space:nowrap;
+  }
+  .item-note{
+    grid-column:1 / -1;
+    color:var(--muted);
+    font-size:.82rem;
+    line-height:1.65;
+  }
+
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="masthead">
+    <p class="mark"><a href="/">— B . H . C —</a></p>
+    <p class="since">since 2020.</p>
+  </header>
+
+  <main>
+    <header class="head">
+      <p class="eyebrow">04 · RESOURCES</p>
+      <h1 class="title">资源</h1>
+    </header>
+    <section class="group">
+      <h2 class="group-label">站内</h2>
+      <ul class="items">
+        <li class="item"><a class="item-inner" href="/heatmap/" rel="noreferrer noopener"><span class="item-name">年度提交热力图</span><span class="item-tag">HTML</span><span class="item-note">按年切换的提交密度图，数据内联在页面里。</span></a></li>
+        <li class="item"><a class="item-inner" href="/heatmap-data.json" rel="noreferrer noopener"><span class="item-name">热力图数据快照</span><span class="item-tag">JSON</span><span class="item-note">同一份数据的纯 JSON，按日期计数，可直接解析。</span></a></li>
+        <li class="item"><a class="item-inner" href="/icon.svg" rel="noreferrer noopener"><span class="item-name">站点图标</span><span class="item-tag">SVG</span><span class="item-note">单色 SVG，标签页与收藏夹共用。</span></a></li>
+        <li class="item"><a class="item-inner" href="/LICENSE" rel="noreferrer noopener"><span class="item-name">许可</span><span class="item-tag">TXT</span><span class="item-note">站内文字与代码除另行标注外按 MIT 提供。</span></a></li>
+      </ul>
+    </section>
+    <section class="group">
+      <h2 class="group-label">外部</h2>
+      <ul class="items">
+        <li class="item"><a class="item-inner" href="https://pages.github.com/" rel="noreferrer noopener"><span class="item-name">GitHub Pages</span><span class="item-tag">DOC</span><span class="item-note">本站的托管方式：从分支根目录直接发布静态文件。</span></a></li>
+        <li class="item"><a class="item-inner" href="https://github.com/bihongcue876/bihongcue876.github.io" rel="noreferrer noopener"><span class="item-name">站点仓库</span><span class="item-tag">REPO</span><span class="item-note">页面、数据与脚本都在这里，历史可查。</span></a></li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <span>© 2026</span>
+    <a href="/">← 首页</a>
+  </footer>
+</div>
+</body>
+</html>

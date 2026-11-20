@@ -1,0 +1,25 @@
+{
+  "slug": "about",
+  "index": "05",
+  "latin": "ABOUT",
+  "title": "关于",
+  "layout": "prose",
+  "facts": [
+    {
+      "k": "站点",
+      "v": "[bihongcue876.github.io](https://bihongcue876.github.io/)"
+    },
+    {
+      "k": "仓库",
+      "v": "[bihongcue876/bihongcue876.github.io](https://github.com/bihongcue876/bihongcue876.github.io)"
+    },
+    {
+      "k": "生成",
+      "v": "python scripts/build_pages.py"
+    },
+    {
+      "k": "许可",
+      "v": "MIT"
+    }
+  ]
+}

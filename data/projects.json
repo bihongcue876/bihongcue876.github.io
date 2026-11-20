@@ -1,0 +1,29 @@
+{
+  "slug": "projects",
+  "index": "01",
+  "latin": "PROJECTS",
+  "title": "项目",
+  "layout": "indexed",
+  "groups": [
+    {
+      "label": "在研",
+      "items": [
+        {
+          "no": "01",
+          "title": "个人主页",
+          "note": "手写 HTML 与 CSS，不引入第三方资源；五个分区的条目由 data/ 下的 JSON 生成。",
+          "status": "维护中",
+          "year": "2026—"
+        },
+        {
+          "no": "02",
+          "title": "年度提交热力图",
+          "note": "由 WSL 定时取数并重绘，按日计数。",
+          "status": "运行中",
+          "year": "2020—",
+          "href": "/heatmap/"
+        }
+      ]
+    }
+  ]
+}

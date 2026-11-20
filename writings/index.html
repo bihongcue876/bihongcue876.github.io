@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src 'self' data:; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
+<title>文稿 · B . H . C</title>
+<meta name="description" content="文稿">
+<link rel="icon" href="/icon.svg" type="image/svg+xml">
+<style>
+  :root{
+    --paper:#f8f5ef;
+    --ink:#1d1b18;
+    --muted:#6d665c;
+    --line:#e4ddd1;
+    --rule:#d2c9ba;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --paper:#141312;
+      --ink:#e8e3d9;
+      --muted:#9b9285;
+      --line:#2a2723;
+      --rule:#3a352d;
+    }
+  }
+  *{ box-sizing:border-box }
+  html{ -webkit-text-size-adjust:100% }
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:Georgia, "Times New Roman", "Iowan Old Style",
+                "Songti SC", "Noto Serif SC", "Noto Serif CJK SC",
+                "Source Han Serif SC", "SimSun", serif;
+    font-size:16px;
+    line-height:1.9;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+  }
+  ::selection{ background:var(--line) }
+  .page{
+    padding:clamp(32px,7vh,64px) clamp(20px,4vw,64px) 48px;
+  }
+  .masthead{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    gap:16px;
+    padding-bottom:14px;
+    border-bottom:1px solid var(--rule);
+  }
+  .mark{
+    margin:0;
+    font-size:.9rem;
+    font-style:italic;
+    letter-spacing:.18em;
+  }
+  .mark a{ color:inherit; text-decoration:none }
+  .since{
+    margin:0;
+    font-size:.78rem;
+    color:var(--muted);
+    letter-spacing:.06em;
+  }
+  .head{
+    margin:clamp(36px,6vh,56px) 0 0;
+    padding-bottom:26px;
+    border-bottom:1px solid var(--rule);
+  }
+  .eyebrow{
+    margin:0;
+    font-size:.74rem;
+    color:var(--muted);
+    letter-spacing:.24em;
+  }
+  .title{
+    margin:14px 0 0;
+    font-size:clamp(1.9rem, 1.15rem + 2.2vw, 2.9rem);
+    font-weight:400;
+    line-height:1.32;
+    letter-spacing:.04em;
+  }
+  .lede{
+    margin:14px 0 0;
+    color:var(--muted);
+    font-size:.95rem;
+    line-height:1.85;
+  }
+  .group-label{
+    margin:38px 0 0;
+    font-size:.76rem;
+    font-weight:400;
+    color:var(--muted);
+    letter-spacing:.22em;
+  }
+  .group-label::before{
+    content:"";
+    display:inline-block;
+    width:1.3rem;
+    height:1px;
+    margin-right:10px;
+    vertical-align:.3em;
+    background:var(--rule);
+  }
+  .site-footer{
+    margin:64px 0 0;
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    color:var(--muted);
+    font-size:.8rem;
+    letter-spacing:.04em;
+  }
+  .site-footer a{
+    color:var(--muted);
+    text-decoration:none;
+    padding-bottom:1px;
+    border-bottom:1px solid var(--line);
+  }
+  .site-footer a:hover{ color:var(--ink); border-bottom-color:var(--ink) }
+  a:focus-visible{ outline:1px solid var(--ink); outline-offset:2px }
+  @media (prefers-reduced-motion: reduce){
+    *{ transition:none !important }
+  }
+  .toc{ margin:0; padding:0; list-style:none }
+  .toc-item{ padding:15px 2px; border-bottom:1px solid var(--line) }
+  .toc-line{ display:flex; align-items:baseline; gap:12px; margin:0 }
+  .toc-title{ font-size:1.02rem; letter-spacing:.03em }
+  a.toc-title{ color:inherit; text-decoration:none }
+  a.toc-title:hover{
+    text-decoration:underline;
+    text-underline-offset:.3em;
+    text-decoration-thickness:1px;
+  }
+  .toc-dots{
+    flex:1;
+    min-width:1.5rem;
+    border-bottom:1px dotted var(--rule);
+    transform:translateY(-.3em);
+  }
+  .toc-date{
+    color:var(--muted);
+    font-size:.78rem;
+    font-variant-numeric:tabular-nums;
+    letter-spacing:.08em;
+    white-space:nowrap;
+  }
+  .toc-note{
+    margin:7px 0 0;
+    color:var(--muted);
+    font-size:.86rem;
+    line-height:1.72;
+  }
+  @media (max-width:560px){
+    .toc-dots{ display:none }
+    .toc-line{ gap:0 }
+    .toc-date{ margin-left:auto; padding-left:12px }
+  }
+
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="masthead">
+    <p class="mark"><a href="/">— B . H . C —</a></p>
+    <p class="since">since 2020.</p>
+  </header>
+
+  <main>
+    <header class="head">
+      <p class="eyebrow">03 · WRITINGS</p>
+      <h1 class="title">文稿</h1>
+    </header>
+
+  </main>
+
+  <footer class="site-footer">
+    <span>© 2026</span>
+    <a href="/">← 首页</a>
+  </footer>
+</div>
+</body>
+</html>

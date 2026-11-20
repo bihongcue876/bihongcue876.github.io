@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src 'self' data:; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
+<title>项目 · B . H . C</title>
+<meta name="description" content="项目">
+<link rel="icon" href="/icon.svg" type="image/svg+xml">
+<style>
+  :root{
+    --paper:#f8f5ef;
+    --ink:#1d1b18;
+    --muted:#6d665c;
+    --line:#e4ddd1;
+    --rule:#d2c9ba;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --paper:#141312;
+      --ink:#e8e3d9;
+      --muted:#9b9285;
+      --line:#2a2723;
+      --rule:#3a352d;
+    }
+  }
+  *{ box-sizing:border-box }
+  html{ -webkit-text-size-adjust:100% }
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:Georgia, "Times New Roman", "Iowan Old Style",
+                "Songti SC", "Noto Serif SC", "Noto Serif CJK SC",
+                "Source Han Serif SC", "SimSun", serif;
+    font-size:16px;
+    line-height:1.9;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+  }
+  ::selection{ background:var(--line) }
+  .page{
+    padding:clamp(32px,7vh,64px) clamp(20px,4vw,64px) 48px;
+  }
+  .masthead{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    gap:16px;
+    padding-bottom:14px;
+    border-bottom:1px solid var(--rule);
+  }
+  .mark{
+    margin:0;
+    font-size:.9rem;
+    font-style:italic;
+    letter-spacing:.18em;
+  }
+  .mark a{ color:inherit; text-decoration:none }
+  .since{
+    margin:0;
+    font-size:.78rem;
+    color:var(--muted);
+    letter-spacing:.06em;
+  }
+  .head{
+    margin:clamp(36px,6vh,56px) 0 0;
+    padding-bottom:26px;
+    border-bottom:1px solid var(--rule);
+  }
+  .eyebrow{
+    margin:0;
+    font-size:.74rem;
+    color:var(--muted);
+    letter-spacing:.24em;
+  }
+  .title{
+    margin:14px 0 0;
+    font-size:clamp(1.9rem, 1.15rem + 2.2vw, 2.9rem);
+    font-weight:400;
+    line-height:1.32;
+    letter-spacing:.04em;
+  }
+  .lede{
+    margin:14px 0 0;
+    color:var(--muted);
+    font-size:.95rem;
+    line-height:1.85;
+  }
+  .group-label{
+    margin:38px 0 0;
+    font-size:.76rem;
+    font-weight:400;
+    color:var(--muted);
+    letter-spacing:.22em;
+  }
+  .group-label::before{
+    content:"";
+    display:inline-block;
+    width:1.3rem;
+    height:1px;
+    margin-right:10px;
+    vertical-align:.3em;
+    background:var(--rule);
+  }
+  .site-footer{
+    margin:64px 0 0;
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    color:var(--muted);
+    font-size:.8rem;
+    letter-spacing:.04em;
+  }
+  .site-footer a{
+    color:var(--muted);
+    text-decoration:none;
+    padding-bottom:1px;
+    border-bottom:1px solid var(--line);
+  }
+  .site-footer a:hover{ color:var(--ink); border-bottom-color:var(--ink) }
+  a:focus-visible{ outline:1px solid var(--ink); outline-offset:2px }
+  @media (prefers-reduced-motion: reduce){
+    *{ transition:none !important }
+  }
+  .entries{ margin:0; padding:0; list-style:none }
+  .entry-link{
+    display:grid;
+    grid-template-columns:2.4rem 1fr auto;
+    gap:4px 18px;
+    align-items:baseline;
+    padding:18px 4px;
+    border-bottom:1px solid var(--line);
+    color:inherit;
+    text-decoration:none;
+  }
+  .entry-link:hover .entry-title{
+    text-decoration:underline;
+    text-underline-offset:.3em;
+    text-decoration-thickness:1px;
+  }
+  .entry-link:hover .no{ color:var(--ink) }
+  a.entry-link:focus-visible{ outline:1px solid var(--ink); outline-offset:-1px }
+  .no{
+    font-size:.78rem;
+    color:var(--muted);
+    font-variant-numeric:tabular-nums;
+    letter-spacing:.08em;
+  }
+  .entry-main{ display:block }
+  .entry-title{ display:block; font-size:1.08rem; letter-spacing:.03em }
+  .entry-note{
+    display:block;
+    margin-top:6px;
+    color:var(--muted);
+    font-size:.86rem;
+    line-height:1.72;
+  }
+  .entry-meta{
+    display:flex;
+    flex-direction:column;
+    align-items:flex-end;
+    gap:2px;
+    font-size:.76rem;
+    color:var(--muted);
+    white-space:nowrap;
+  }
+  .entry-meta .status{ letter-spacing:.1em }
+  .entry-meta .year{ font-variant-numeric:tabular-nums; letter-spacing:.04em }
+  .entry-link.is-plain{ cursor:default }
+  .entry-link.is-plain:hover .entry-title{ text-decoration:none }
+  @media (max-width:660px){
+    .entry-link{ grid-template-columns:1.9rem 1fr }
+    .entry-meta{
+      grid-column:2;
+      flex-direction:row;
+      align-items:baseline;
+      gap:14px;
+      margin-top:8px;
+    }
+  }
+
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="masthead">
+    <p class="mark"><a href="/">— B . H . C —</a></p>
+    <p class="since">since 2020.</p>
+  </header>
+
+  <main>
+    <header class="head">
+      <p class="eyebrow">01 · PROJECTS</p>
+      <h1 class="title">项目</h1>
+    </header>
+    <section class="group">
+      <h2 class="group-label">在研</h2>
+      <ol class="entries">
+        <li><span class="entry-link is-plain"><span class="no">01</span><span class="entry-main"><span class="entry-title">个人主页</span><span class="entry-note">手写 HTML 与 CSS，不引入第三方资源；五个分区的条目由 data/ 下的 JSON 生成。</span></span><span class="entry-meta"><span class="status">维护中</span><span class="year">2026—</span></span></span></li>
+        <li><a class="entry-link" href="/heatmap/" rel="noreferrer noopener"><span class="no">02</span><span class="entry-main"><span class="entry-title">年度提交热力图</span><span class="entry-note">由 WSL 定时取数并重绘，按日计数。</span></span><span class="entry-meta"><span class="status">运行中</span><span class="year">2020—</span></span></a></li>
+      </ol>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <span>© 2026</span>
+    <a href="/">← 首页</a>
+  </footer>
+</div>
+</body>
+</html>

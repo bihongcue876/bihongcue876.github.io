@@ -1,0 +1,4 @@
+﻿.heatmap.log
+__pycache__/
+*.pyc
+_backup/
