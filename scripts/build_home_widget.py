@@ -58,7 +58,7 @@ function lunar(d){
   return lv;
 }
 // 百刻制：刻长 14.4 分，刻下十分，一时辰八刻，末 4.8 分为小刻
-var ce=document.querySelector('[data-clock="cn"]'),ee=document.querySelector('[data-clock="ex"]');
+var ce=document.querySelector('[data-clock="cn"]'),ee=document.querySelector('[data-clock="ex"]'),ca=document.querySelector("[data-cal]");
 function tick(){
   var d=new Date(),h=d.getHours(),mi=d.getMinutes(),s=d.getSeconds();
   var x=(h+1)%24,idx=Math.floor(x/2),off=(x%2)*60+mi+s/60+1e-9;
@@ -66,7 +66,7 @@ function tick(){
   var ck=off<115.2?"一二三四五六七八".charAt(k)+"刻"+(f?"一二三四五六七八九".charAt(f-1)+"分":""):"小刻";
   if(ce)ce.textContent=T.charAt(idx)+"时"+ck+"　"+(lunar(d)||solar(d));
   if(ee)ee.textContent=d.getFullYear()+"年"+(d.getMonth()+1)+"月"+d.getDate()+"日 "+p2(h)+":"+p2(mi)+":"+p2(s);
-  if(ee)ee.textContent=d.getFullYear()+"年"+(d.getMonth()+1)+"月"+d.getDate()+"日 "+p2(h)+":"+p2(mi)+":"+p2(s);
+  if(ca){var u="/calendar/#"+d.getFullYear()+"-"+p2(d.getMonth()+1)+"-"+p2(d.getDate());if(ca.getAttribute("href")!==u)ca.setAttribute("href",u);}
 }
 tick();
 setInterval(tick,1000);
@@ -166,6 +166,7 @@ def main(argv=None) -> int:
   <article class="widget">
     <div class="widget-head">
       <span>此刻</span>
+      <a href="/calendar/" data-cal title="看今日黄历" aria-label="看今日黄历">→</a>
     </div>
     <div class="clock">
       <p class="clock-cn" data-clock="cn">—</p>
