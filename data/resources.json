@@ -21,12 +21,6 @@
           "href": "/heatmap-data.json"
         },
         {
-          "name": "站点图标",
-          "note": "单色 SVG，标签页与收藏夹共用。",
-          "tag": "SVG",
-          "href": "/icon.svg"
-        },
-        {
           "name": "许可",
           "note": "站内文字与代码除另行标注外按 MIT 提供。",
           "tag": "TXT",

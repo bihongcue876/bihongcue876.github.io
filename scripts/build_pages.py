@@ -35,7 +35,6 @@ SHELL = """<!doctype html>
 <meta name="referrer" content="no-referrer">
 <title>__TITLE__</title>
 <meta name="description" content="__DESC__">
-<link rel="icon" href="/icon.svg" type="image/svg+xml">
 <style>
 __CSS__
 </style>
