@@ -8,14 +8,16 @@
 
 | 路径 | 内容 |
 | --- | --- |
-| `index.html` | 首页：页头标记、主句、说明、组件框、五个分区入口；单文件、无脚本 |
+| `index.html` | 首页：页头标记、主句、说明、组件框、五个分区入口；单文件，含一个内联时钟脚本 |
 | `projects/` `works/` `writings/` `resources/` `about/` | 五个分区页，由 `data/` 下的 JSON 生成，产物一并提交 |
 | `data/*.json` | 分区条目登记：项目、作品、文稿、资源、关于 |
 | `scripts/build_pages.py` | 读 `data/*.json`，生成五个分区页 |
 | `heatmap/index.html` | 年度提交热力图，由脚本生成，数据内联 |
 | `heatmap-data.json` | 同一份热力图数据的纯 JSON 快照 |
+| `calendar/index.html` | 黄历：月历网格与当日干支、节气、建除、宜忌，由 `scripts/build_calendar.py` 生成 |
+| `assets/lunar.js` | 黄历页使用的农历库 lunar-javascript v1.7.8（MIT，© 6tail） |
 | `scripts/` | 取数与渲染脚本（随站点公开，见下方说明） |
-| `404.html` / `robots.txt` / `icon.svg` | 站点元文件 |
+| `404.html` / `robots.txt` | 站点元文件 |
 
 ## 分区形式
 
@@ -55,7 +57,7 @@ Windows 侧可双击 `scripts/refresh.cmd` 走同一流程。日志写在 `.heat
 
 ## 说明
 
-页面不含 JavaScript，不加载第三方资源；外部请求只可能由「资源」页里明确列出的链接发起。本地预览：
+首页与五个分区页不含脚本；黄历页与热力图页各带一段内联脚本，黄历页另加载同源的 `assets/lunar.js`。页面不加载第三方资源；外部请求只可能由「资源」页里明确列出的链接发起。本地预览：
 
 ```bash
 python -m http.server 8765
