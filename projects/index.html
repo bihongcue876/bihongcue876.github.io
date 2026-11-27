@@ -124,14 +124,35 @@
   @media (prefers-reduced-motion: reduce){
     *{ transition:none !important }
   }
+  .group-nav{ margin:26px 0 0 }
+  .group-nav ul{
+    margin:0;
+    padding:0;
+    list-style:none;
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px 20px;
+    font-size:.8rem;
+    letter-spacing:.08em;
+  }
+  .group-nav a{ color:var(--muted); text-decoration:none }
+  .group-nav a:hover{ color:var(--ink) }
+  .group-nav + .group .group-label{ margin-top:22px }
+  .group-note{
+    margin:12px 0 0;
+    color:var(--muted);
+    font-size:.87rem;
+    line-height:1.8;
+  }
+  .group-note a{ color:var(--ink) }
   .entries{ margin:0; padding:0; list-style:none }
+  .entry{ border-bottom:1px solid var(--line) }
   .entry-link{
     display:grid;
     grid-template-columns:2.4rem 1fr auto;
     gap:4px 18px;
     align-items:baseline;
     padding:18px 4px;
-    border-bottom:1px solid var(--line);
     color:inherit;
     text-decoration:none;
   }
@@ -170,6 +191,23 @@
   .entry-meta .year{ font-variant-numeric:tabular-nums; letter-spacing:.04em }
   .entry-link.is-plain{ cursor:default }
   .entry-link.is-plain:hover .entry-title{ text-decoration:none }
+  .entry-links{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px 16px;
+    margin:0;
+    padding:0 4px 16px;
+    font-size:.78rem;
+    letter-spacing:.06em;
+  }
+  .entry-links a{
+    color:var(--muted);
+    text-decoration:none;
+    padding-bottom:1px;
+    border-bottom:1px solid var(--line);
+  }
+  .entry-links a:hover{ color:var(--ink); border-bottom-color:var(--ink) }
+  .entry.is-empty .entry-note{ font-style:italic }
   @media (max-width:660px){
     .entry-link{ grid-template-columns:1.9rem 1fr }
     .entry-meta{
@@ -195,18 +233,34 @@
       <p class="eyebrow">01 · PROJECTS</p>
       <h1 class="title">项目</h1>
     </header>
-    <section class="group">
-      <h2 class="group-label">在研</h2>
+    <nav class="group-nav" aria-label="分类">
+      <ul>
+        <li><a href="#ideas">创意</a></li>
+        <li><a href="#course">学校课程</a></li>
+        <li><a href="#research">测试研究</a></li>
+      </ul>
+    </nav>
+    <section class="group" id="ideas">
+      <h2 class="group-label">创意</h2>
       <ol class="entries">
-        <li><span class="entry-link is-plain"><span class="no">01</span><span class="entry-main"><span class="entry-title">个人主页</span><span class="entry-note">手写 HTML 与 CSS，不引入第三方资源；五个分区的条目由 data/ 下的 JSON 生成。</span></span><span class="entry-meta"><span class="status">维护中</span><span class="year">2026—</span></span></span></li>
-        <li><a class="entry-link" href="/heatmap/" rel="noreferrer noopener"><span class="no">02</span><span class="entry-main"><span class="entry-title">年度提交热力图</span><span class="entry-note">由 WSL 定时取数并重绘，按日计数。</span></span><span class="entry-meta"><span class="status">运行中</span><span class="year">2020—</span></span></a></li>
+      </ol>
+    </section>
+    <section class="group" id="course">
+      <h2 class="group-label">学校课程</h2>
+      <ol class="entries">
+      </ol>
+    </section>
+    <section class="group" id="research">
+      <h2 class="group-label">测试研究</h2>
+      <ol class="entries">
+        <li class="entry"><a class="entry-link" href="/projects/smallworld/" rel="noreferrer noopener"><span class="no">01</span><span class="entry-main"><span class="entry-title">小世界寻路</span><span class="entry-note">Kleinberg 可导航性模拟：二维环面，局部信息贪心寻路，单次演示与批量实验。</span></span><span class="entry-meta"><span class="year">2026</span></span></a></li>
       </ol>
     </section>
   </main>
 
   <footer class="site-footer">
     <span>© 2026</span>
-    <a href="/">← 首页</a>
+    <span class="foot-links"><a href="/search/">检索</a> · <a href="/">← 首页</a></span>
   </footer>
 </div>
 </body>

@@ -52,7 +52,7 @@ __BODY__
 
   <footer class="site-footer">
     <span>__COPY__</span>
-    <a href="/">← 首页</a>
+    <span class="foot-links"><a href="/search/">检索</a> · <a href="/">← 首页</a></span>
   </footer>
 </div>
 </body>
@@ -176,14 +176,35 @@ BASE_CSS = """  :root{
   }
 """
 
-CSS_INDEXED = """  .entries{ margin:0; padding:0; list-style:none }
+CSS_INDEXED = """  .group-nav{ margin:26px 0 0 }
+  .group-nav ul{
+    margin:0;
+    padding:0;
+    list-style:none;
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px 20px;
+    font-size:.8rem;
+    letter-spacing:.08em;
+  }
+  .group-nav a{ color:var(--muted); text-decoration:none }
+  .group-nav a:hover{ color:var(--ink) }
+  .group-nav + .group .group-label{ margin-top:22px }
+  .group-note{
+    margin:12px 0 0;
+    color:var(--muted);
+    font-size:.87rem;
+    line-height:1.8;
+  }
+  .group-note a{ color:var(--ink) }
+  .entries{ margin:0; padding:0; list-style:none }
+  .entry{ border-bottom:1px solid var(--line) }
   .entry-link{
     display:grid;
     grid-template-columns:2.4rem 1fr auto;
     gap:4px 18px;
     align-items:baseline;
     padding:18px 4px;
-    border-bottom:1px solid var(--line);
     color:inherit;
     text-decoration:none;
   }
@@ -222,6 +243,23 @@ CSS_INDEXED = """  .entries{ margin:0; padding:0; list-style:none }
   .entry-meta .year{ font-variant-numeric:tabular-nums; letter-spacing:.04em }
   .entry-link.is-plain{ cursor:default }
   .entry-link.is-plain:hover .entry-title{ text-decoration:none }
+  .entry-links{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px 16px;
+    margin:0;
+    padding:0 4px 16px;
+    font-size:.78rem;
+    letter-spacing:.06em;
+  }
+  .entry-links a{
+    color:var(--muted);
+    text-decoration:none;
+    padding-bottom:1px;
+    border-bottom:1px solid var(--line);
+  }
+  .entry-links a:hover{ color:var(--ink); border-bottom-color:var(--ink) }
+  .entry.is-empty .entry-note{ font-style:italic }
   @media (max-width:660px){
     .entry-link{ grid-template-columns:1.9rem 1fr }
     .entry-meta{
@@ -271,7 +309,14 @@ CSS_PLATES = """  .plates{ margin:34px 0 0 }
   }
 """
 
-CSS_TOC = """  .toc{ margin:0; padding:0; list-style:none }
+CSS_TOC = """  .group-note{
+    margin:12px 0 0;
+    color:var(--muted);
+    font-size:.87rem;
+    line-height:1.8;
+  }
+  .group-note a{ color:var(--ink) }
+  .toc{ margin:0; padding:0; list-style:none }
   .toc-item{ padding:15px 2px; border-bottom:1px solid var(--line) }
   .toc-line{ display:flex; align-items:baseline; gap:12px; margin:0 }
   .toc-title{ font-size:1.02rem; letter-spacing:.03em }
@@ -300,6 +345,12 @@ CSS_TOC = """  .toc{ margin:0; padding:0; list-style:none }
     font-size:.86rem;
     line-height:1.72;
   }
+  .toc-tag{
+    margin-left:11px;
+    padding-left:11px;
+    border-left:1px solid var(--rule);
+    letter-spacing:.1em;
+  }
   @media (max-width:560px){
     .toc-dots{ display:none }
     .toc-line{ gap:0 }
@@ -307,12 +358,18 @@ CSS_TOC = """  .toc{ margin:0; padding:0; list-style:none }
   }
 """
 
-CSS_LIST = """  .items{
+CSS_LIST = """  .group-note{
+    margin:12px 0 0;
+    color:var(--muted);
+    font-size:.87rem;
+    line-height:1.8;
+  }
+  .items{
     margin:0;
     padding:0;
     list-style:none;
     display:grid;
-    grid-template-columns:repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns:repeat(2, minmax(0, 1fr));
     gap:0 44px;
   }
   .item{ border-bottom:1px solid var(--line) }
@@ -343,6 +400,9 @@ CSS_LIST = """  .items{
     color:var(--muted);
     font-size:.82rem;
     line-height:1.65;
+  }
+  @media (max-width:720px){
+    .items{ grid-template-columns:1fr; gap:0 }
   }
 """
 
@@ -405,19 +465,48 @@ def wrap_link(cls: str, href, inner: str) -> str:
 
 
 def render_indexed(data: dict) -> str:
+    groups = data.get("groups", [])
     out = []
-    for group in data.get("groups", []):
-        out.append('    <section class="group">')
+
+    nav = []
+    for group in groups:
+        if not (group.get("label") and group.get("id")):
+            continue
+        nav.append('        <li><a href="#%s">%s</a></li>' % (esc(group["id"]), esc(group["label"])))
+    if len(nav) > 1:
+        out.append('    <nav class="group-nav" aria-label="分类">')
+        out.append('      <ul>')
+        out.extend(nav)
+        out.append('      </ul>')
+        out.append('    </nav>')
+
+    for group in groups:
+        gid = (' id="%s"' % esc(group["id"])) if group.get("id") else ""
+        out.append('    <section class="group"%s>' % gid)
         if group.get("label"):
             out.append('      <h2 class="group-label">%s</h2>' % esc(group["label"]))
+        if group.get("note"):
+            out.append('      <p class="group-note">%s</p>' % rich(group["note"]))
         out.append('      <ol class="entries">')
-        for item in group.get("items", []):
+        items = group.get("items") or []
+        if not items and group.get("empty") is not False:
+            out.append(
+                '        <li class="entry is-empty"><span class="entry-link is-plain">'
+                '<span class="no">—</span>'
+                '<span class="entry-main"><span class="entry-note">%s</span></span>'
+                '</span></li>' % esc(group.get("empty") or "暂无条目")
+            )
+        for i, item in enumerate(items, 1):
+            href = item.get("href")
             meta = []
             if item.get("status"):
                 meta.append('<span class="status">%s</span>' % esc(item["status"]))
             if item.get("year"):
                 meta.append('<span class="year">%s</span>' % esc(item["year"]))
-            note = ('<span class="entry-note">%s</span>' % esc(item["note"])) if item.get("note") else ""
+            note = ""
+            if item.get("note"):
+                text = esc(item["note"]) if href else rich(item["note"])
+                note = '<span class="entry-note">%s</span>' % text
             inner = (
                 '<span class="no">%s</span>'
                 '<span class="entry-main">'
@@ -425,20 +514,30 @@ def render_indexed(data: dict) -> str:
                 '</span>'
                 '%s'
             ) % (
-                esc(item.get("no", "")),
+                esc(item.get("no") or "%02d" % i),
                 esc(item["title"]),
                 note,
                 ('<span class="entry-meta">%s</span>' % "".join(meta)) if meta else "",
             )
-            out.append('        <li>%s</li>' % wrap_link("entry-link", item.get("href"), inner))
+            links = item.get("links") or []
+            extra = ""
+            if links:
+                extra = '\n          <p class="entry-links">%s</p>' % "".join(
+                    '<a href="%s" rel="noreferrer noopener">%s</a>' % (esc(x["href"]), esc(x["label"]))
+                    for x in links
+                )
+            out.append('        <li class="entry">%s%s</li>' % (wrap_link("entry-link", href, inner), extra))
         out.append('      </ol>')
         out.append('    </section>')
     return "\n".join(out)
 
 
 def render_plates(data: dict) -> str:
+    items = data.get("items") or []
+    if not items:
+        return ""
     out = ['    <section class="plates">']
-    for item in data.get("items", []):
+    for item in items:
         title = esc(item["title"])
         if item.get("href"):
             title = '<a href="%s">%s</a>' % (esc(item["href"]), title)
@@ -456,21 +555,31 @@ def render_plates(data: dict) -> str:
 def render_toc(data: dict) -> str:
     out = []
     for group in data.get("groups", []):
-        out.append('    <section class="group">')
+        gid = (' id="%s"' % esc(group["id"])) if group.get("id") else ""
+        out.append('    <section class="group"%s>' % gid)
         if group.get("label"):
             out.append('      <h2 class="group-label">%s</h2>' % esc(group["label"]))
+        if group.get("note"):
+            out.append('      <p class="group-note">%s</p>' % rich(group["note"]))
         out.append('      <ul class="toc">')
-        for item in group.get("items", []):
+        items = group.get("items") or []
+        if not items and group.get("empty") is not False:
+            out.append('        <li class="toc-item"><p class="toc-note">%s</p></li>'
+                       % esc(group.get("empty") or "暂无条目"))
+        for item in items:
             if item.get("href"):
                 title = '<a class="toc-title" href="%s">%s</a>' % (esc(item["href"]), esc(item["title"]))
             else:
                 title = '<span class="toc-title">%s</span>' % esc(item["title"])
             note = ('\n          <p class="toc-note">%s</p>' % esc(item["note"])) if item.get("note") else ""
+            right = esc(item.get("date", ""))
+            if item.get("tag"):
+                right = '%s<span class="toc-tag">%s</span>' % (right, esc(item["tag"]))
             out.append(
                 '        <li class="toc-item">\n'
                 '          <p class="toc-line">%s<span class="toc-dots"></span>'
                 '<span class="toc-date">%s</span></p>%s\n'
-                '        </li>' % (title, esc(item.get("date", "")), note)
+                '        </li>' % (title, right, note)
             )
         out.append('      </ul>')
         out.append('    </section>')
@@ -480,11 +589,19 @@ def render_toc(data: dict) -> str:
 def render_list(data: dict) -> str:
     out = []
     for group in data.get("groups", []):
-        out.append('    <section class="group">')
+        gid = (' id="%s"' % esc(group["id"])) if group.get("id") else ""
+        out.append('    <section class="group"%s>' % gid)
         if group.get("label"):
             out.append('      <h2 class="group-label">%s</h2>' % esc(group["label"]))
+        if group.get("note"):
+            out.append('      <p class="group-note">%s</p>' % rich(group["note"]))
         out.append('      <ul class="items">')
-        for item in group.get("items", []):
+        items = group.get("items") or []
+        if not items and group.get("empty") is not False:
+            out.append('        <li class="item"><span class="item-inner is-plain">'
+                       '<span class="item-note">%s</span></span></li>'
+                       % esc(group.get("empty") or "暂无条目"))
+        for item in items:
             note = ('<span class="item-note">%s</span>' % esc(item["note"])) if item.get("note") else ""
             tag = ('<span class="item-tag">%s</span>' % esc(item["tag"])) if item.get("tag") else ""
             inner = '<span class="item-name">%s</span>%s%s' % (esc(item["name"]), tag, note)

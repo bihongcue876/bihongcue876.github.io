@@ -4,5 +4,48 @@
   "latin": "WRITINGS",
   "title": "文稿",
   "layout": "toc",
-  "groups": []
+  "groups": [
+    {
+      "id": "articles",
+      "label": "文章",
+      "empty": false,
+      "items": [
+        {
+          "title": "Kleinberg 可导航性机制的数值验证（公共报告）",
+          "date": "2026-11-27",
+          "tag": "复杂网络",
+          "href": "/writings/kleinberg-report/",
+          "file": "kleinberg-report"
+        },
+        {
+          "title": "MLA 的小体量复现：3.556× 缓存压缩的代价与条件",
+          "date": "2026-11-25",
+          "tag": "机器学习",
+          "href": "/writings/mla-small-scale/",
+          "file": "mla-small-scale"
+        },
+        {
+          "title": "RISC-V 32I 基本原理与 Python 实现方案",
+          "date": "2026-11-23",
+          "tag": "RISC-V",
+          "note": "以 RV32I 编解码原理为主线：六种指令格式、立即数排布、编码与译码链路、PC 相对寻址，并说明本项目与各原理的对应关系。",
+          "href": "/writings/riscv32i/",
+          "file": "riscv32i",
+          "summary": "RV32I 编解码原理与 Python 实现方案：指令格式、立即数排布、编码与译码链路、PC 相对寻址。"
+        }
+      ]
+    },
+    {
+      "id": "notes",
+      "label": "笔记",
+      "empty": false,
+      "items": []
+    },
+    {
+      "id": "misc",
+      "label": "其他",
+      "empty": false,
+      "items": []
+    }
+  ]
 }

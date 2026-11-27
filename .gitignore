@@ -2,3 +2,7 @@
 __pycache__/
 *.pyc
 _backup/
+
+# 一次性补丁与 Windows 设备文件
+scripts/_patch_heatmap.py
+CON

@@ -124,6 +124,13 @@
   @media (prefers-reduced-motion: reduce){
     *{ transition:none !important }
   }
+  .group-note{
+    margin:12px 0 0;
+    color:var(--muted);
+    font-size:.87rem;
+    line-height:1.8;
+  }
+  .group-note a{ color:var(--ink) }
   .toc{ margin:0; padding:0; list-style:none }
   .toc-item{ padding:15px 2px; border-bottom:1px solid var(--line) }
   .toc-line{ display:flex; align-items:baseline; gap:12px; margin:0 }
@@ -153,6 +160,12 @@
     font-size:.86rem;
     line-height:1.72;
   }
+  .toc-tag{
+    margin-left:11px;
+    padding-left:11px;
+    border-left:1px solid var(--rule);
+    letter-spacing:.1em;
+  }
   @media (max-width:560px){
     .toc-dots{ display:none }
     .toc-line{ gap:0 }
@@ -173,12 +186,36 @@
       <p class="eyebrow">03 · WRITINGS</p>
       <h1 class="title">文稿</h1>
     </header>
-
+    <section class="group" id="articles">
+      <h2 class="group-label">文章</h2>
+      <ul class="toc">
+        <li class="toc-item">
+          <p class="toc-line"><a class="toc-title" href="/writings/kleinberg-report/">Kleinberg 可导航性机制的数值验证（公共报告）</a><span class="toc-dots"></span><span class="toc-date">2026-11-27<span class="toc-tag">复杂网络</span></span></p>
+        </li>
+        <li class="toc-item">
+          <p class="toc-line"><a class="toc-title" href="/writings/mla-small-scale/">MLA 的小体量复现：3.556× 缓存压缩的代价与条件</a><span class="toc-dots"></span><span class="toc-date">2026-11-25<span class="toc-tag">机器学习</span></span></p>
+        </li>
+        <li class="toc-item">
+          <p class="toc-line"><a class="toc-title" href="/writings/riscv32i/">RISC-V 32I 基本原理与 Python 实现方案</a><span class="toc-dots"></span><span class="toc-date">2026-11-23<span class="toc-tag">RISC-V</span></span></p>
+          <p class="toc-note">以 RV32I 编解码原理为主线：六种指令格式、立即数排布、编码与译码链路、PC 相对寻址，并说明本项目与各原理的对应关系。</p>
+        </li>
+      </ul>
+    </section>
+    <section class="group" id="notes">
+      <h2 class="group-label">笔记</h2>
+      <ul class="toc">
+      </ul>
+    </section>
+    <section class="group" id="misc">
+      <h2 class="group-label">其他</h2>
+      <ul class="toc">
+      </ul>
+    </section>
   </main>
 
   <footer class="site-footer">
     <span>© 2026</span>
-    <a href="/">← 首页</a>
+    <span class="foot-links"><a href="/search/">检索</a> · <a href="/">← 首页</a></span>
   </footer>
 </div>
 </body>

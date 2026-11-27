@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; worker-src 'self'; child-src 'self'; connect-src 'self'; base-uri 'none'; form-action 'none'" />
+    <meta name="referrer" content="no-referrer" />
+    <title>B . H . C | 小世界寻路</title>
+    <meta name="description" content="Kleinberg 可导航性模型：二维环面上的局部信息贪心寻路，含单次演示与批量实验。" />
+    <script type="module" crossorigin src="./assets/index-CXND79QP.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-h3nh4Dw2.css">
+    <link rel="stylesheet" href="./site.css">
+  </head>
+  <body>
+    <header class="sitehead">
+      <p class="mark"><a href="/">— B . H . C —</a></p>
+      <p class="since"><a href="/projects/">项目</a> · <a href="/">← 首页</a></p>
+    </header>
+
+    <header class="topbar">
+      <div class="brand">
+        <span class="dot"></span>
+        <span>小世界寻路</span>
+        <span class="sub">Kleinberg 可导航性模拟 · 二维环面 · 局部信息贪心</span>
+      </div>
+      <div class="tabs">
+        <button id="tab-demo" class="tab active" type="button">单次演示</button>
+        <button id="tab-batch" class="tab" type="button">批量实验</button>
+      </div>
+      <div class="topbar-right">
+        <div id="presets" class="presets"></div>
+        <button id="about-btn" class="ghost" type="button">说明</button>
+      </div>
+    </header>
+
+    <main class="layout">
+      <aside class="panel">
+        <h2>参数</h2>
+        <label class="field">
+          <span>网格边长 n</span>
+          <select id="n-select">
+            <option>16</option>
+            <option selected>32</option>
+            <option>48</option>
+            <option>64</option>
+            <option>80</option>
+            <option>96</option>
+            <option>112</option>
+            <option>128</option>
+          </select>
+        </label>
+        <label class="field">
+          <span>长程边指数 α <b id="alpha-value">2.00</b></span>
+          <input id="alpha-range" type="range" min="0" max="4" step="0.25" value="2" />
+        </label>
+        <label class="field">
+          <span>随机种子</span>
+          <span class="seed-row">
+            <input id="seed-input" type="number" value="42" step="1" min="0" />
+            <button id="seed-random" class="ghost" type="button" title="随机生成一个种子">随机</button>
+          </span>
+        </label>
+        <button id="rebuild" class="primary" type="button">重建网络</button>
+
+        <h2>播放</h2>
+        <div class="controls">
+          <button id="play" class="primary wide" type="button">播放</button>
+          <button id="step" class="ghost" type="button">单步</button>
+          <button id="reset" class="ghost" type="button">重置</button>
+          <button id="screenshot" class="ghost wide" type="button">截图下载</button>
+        </div>
+        <label class="field">
+          <span>速度 <b id="speed-value">8</b> 步/秒</span>
+          <input id="speed-range" type="range" min="1" max="30" step="1" value="8" />
+        </label>
+        <p class="hint">点击画布选起点，按住 Shift 点击选终点。</p>
+      </aside>
+
+      <section class="stage">
+        <canvas id="canvas"></canvas>
+        <div id="status" class="status">准备中</div>
+      </section>
+
+      <section id="batch-panel" class="batch" hidden>
+        <div class="batch-head">
+          <h2>批量实验</h2>
+          <div class="batch-controls">
+            <label class="inline">图数 <input id="graphs-input" type="number" value="5" min="1" max="50" /></label>
+            <label class="inline">每图对数 <input id="pairs-input" type="number" value="20" min="1" max="200" /></label>
+            <button id="run-batch" class="primary" type="button">开始</button>
+            <button id="cancel-batch" class="ghost" type="button" disabled>取消</button>
+            <button id="export-csv" class="ghost" type="button" disabled>导出 CSV</button>
+          </div>
+        </div>
+        <div class="progress"><div id="progress-bar"></div></div>
+        <div class="results-wrap">
+          <table class="results">
+            <thead>
+              <tr>
+                <th>n</th>
+                <th>α</th>
+                <th>样本</th>
+                <th>成功率</th>
+                <th>平均跳数</th>
+                <th>最短路</th>
+                <th>效率比</th>
+                <th>长程边使用率</th>
+              </tr>
+            </thead>
+            <tbody id="results-body"></tbody>
+          </table>
+        </div>
+        <p class="note">
+          结果按配置哈希累积：同一配置重跑会替换原行，不同参数各占一行，可直接对比。
+          批量默认小样本，只用于演示；论文数据由 Node 脚本生成，见 results/。
+        </p>
+      </section>
+
+      <aside class="panel metrics">
+        <h2>指标</h2>
+        <div class="metric">
+          <span class="label">贪心跳数 T</span>
+          <span id="m-steps" class="value">—</span>
+        </div>
+        <div class="metric">
+          <span class="label">最短路 ℓ</span>
+          <span id="m-shortest" class="value">—</span>
+        </div>
+        <div class="metric">
+          <span class="label">效率比 T / ℓ</span>
+          <span id="m-stretch" class="value">—</span>
+        </div>
+        <div class="metric">
+          <span class="label">长程边使用率</span>
+          <span id="m-long" class="value">—</span>
+        </div>
+        <div class="metric">
+          <span class="label">到达状态</span>
+          <span id="m-failure" class="value">—</span>
+        </div>
+        <p class="note">
+          成功率在本模型中恒为 100%：本地边保证每步都有更近的邻居。可发现性的差异体现在跳数。
+        </p>
+        <p id="demo-note" class="note example" hidden>示例，不作为统计结论。</p>
+      </aside>
+    </main>
+
+    <div id="about" class="about" hidden>
+      <div class="about-card">
+        <button id="about-close" class="about-close" type="button" aria-label="关闭">×</button>
+        <div id="about-body"></div>
+      </div>
+    </div>
+
+  </body>
+</html>

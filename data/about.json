@@ -4,22 +4,22 @@
   "latin": "ABOUT",
   "title": "关于",
   "layout": "prose",
+  "paragraphs": [
+    "本站为个人演示站点，属于 Web 页面，部署纯前端项目、有关文章、交互组件、技术或学习资源。本站点仅个人演示与资源提供，无其他目的。",
+    "本站是个人站，使用 AI 辅助搭建。"
+  ],
   "facts": [
+    {
+      "k": "GitHub",
+      "v": "[@bihongcue876](https://github.com/bihongcue876)"
+    },
     {
       "k": "站点",
       "v": "[bihongcue876.github.io](https://bihongcue876.github.io/)"
     },
     {
-      "k": "仓库",
-      "v": "[bihongcue876/bihongcue876.github.io](https://github.com/bihongcue876/bihongcue876.github.io)"
-    },
-    {
-      "k": "生成",
-      "v": "python scripts/build_pages.py"
-    },
-    {
-      "k": "许可",
-      "v": "MIT"
+      "k": "邮箱",
+      "v": "[bihc_76594u@foxmail.com](mailto:bihc_76594u@foxmail.com)"
     }
   ]
 }

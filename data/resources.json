@@ -2,46 +2,18 @@
   "slug": "resources",
   "index": "04",
   "latin": "RESOURCES",
-  "title": "资源",
+  "title": "工具与资源",
   "layout": "list",
   "groups": [
     {
-      "label": "站内",
+      "id": "try",
+      "label": "纯前端试用资源",
       "items": [
         {
-          "name": "年度提交热力图",
-          "note": "按年切换的提交密度图，数据内联在页面里。",
-          "tag": "HTML",
-          "href": "/heatmap/"
-        },
-        {
-          "name": "热力图数据快照",
-          "note": "同一份数据的纯 JSON，按日期计数，可直接解析。",
-          "tag": "JSON",
-          "href": "/heatmap-data.json"
-        },
-        {
-          "name": "许可",
-          "note": "站内文字与代码除另行标注外按 MIT 提供。",
-          "tag": "TXT",
-          "href": "/LICENSE"
-        }
-      ]
-    },
-    {
-      "label": "外部",
-      "items": [
-        {
-          "name": "GitHub Pages",
-          "note": "本站的托管方式：从分支根目录直接发布静态文件。",
-          "tag": "DOC",
-          "href": "https://pages.github.com/"
-        },
-        {
-          "name": "站点仓库",
-          "note": "页面、数据与脚本都在这里，历史可查。",
-          "tag": "REPO",
-          "href": "https://github.com/bihongcue876/bihongcue876.github.io"
+          "name": "RISC-V 32I 转码学习助手",
+          "note": "汇编与机器码双向转码、指令格式速查，纯前端运行，改动只存本机。",
+          "tag": "TOOL",
+          "href": "/resources/riscv32i/"
         }
       ]
     }

@@ -1,0 +1,16 @@
+/* 本站页头：接在打包样式之后，只补一条返回导航，不改应用自身配色。 */
+.sitehead {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+  padding: 12px 20px 10px;
+  border-bottom: 1px solid var(--border);
+  background: var(--card);
+  font-size: 12px;
+  letter-spacing: .12em;
+}
+.sitehead p { margin: 0; }
+.sitehead a { color: var(--muted); text-decoration: none; }
+.sitehead a:hover { color: var(--text); }
+.sitehead .mark { font-style: italic; letter-spacing: .18em; color: var(--text); }
