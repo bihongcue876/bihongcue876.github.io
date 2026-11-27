@@ -43,7 +43,7 @@ __CSS__
 <div class="page">
   <header class="masthead">
     <p class="mark"><a href="/">__MARK__</a></p>
-    <p class="since">__SINCE__</p>
+    <p class="since"><a class="search-link" href="/search/">全页检索</a> __SINCE__</p>
   </header>
 
   <main>
@@ -114,6 +114,17 @@ BASE_CSS = """  :root{
     color:var(--muted);
     letter-spacing:.06em;
   }
+  .search-link{
+    display:inline-block;
+    padding:3px 11px;
+    border:1px solid var(--rule);
+    border-radius:2px;
+    color:var(--ink);
+    letter-spacing:.14em;
+    text-decoration:none;
+    transition:border-color .16s ease, background .16s ease;
+  }
+  .search-link:hover{ border-color:var(--ink); background:var(--line) }
   .head{
     margin:clamp(36px,6vh,56px) 0 0;
     padding-bottom:26px;

@@ -68,6 +68,16 @@
   }
   .since a{ color:inherit; text-decoration:none }
   .since a:hover{ color:var(--ink) }
+  .since .search-link{
+    display:inline-block;
+    padding:3px 11px;
+    border:1px solid var(--rule);
+    border-radius:2px;
+    color:var(--ink);
+    letter-spacing:.14em;
+    transition:border-color .16s ease, background .16s ease;
+  }
+  .since .search-link:hover{ border-color:var(--ink); background:var(--line) }
   .verse{
     margin:clamp(48px,8vh,80px) 0 0;
     text-align:center;
@@ -296,7 +306,7 @@
 <div class="page">
   <header class="masthead">
     <h1 class="mark">— B . H . C —</h1>
-    <p class="since"><a href="/search/">检索</a> · since 2020.</p>
+    <p class="since"><a class="search-link" href="/search/">全页检索</a> · since 2020.</p>
   </header>
 
   <main>
